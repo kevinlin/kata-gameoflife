@@ -1,10 +1,8 @@
 package com.zuhlke.kata.gameoflife;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -17,7 +15,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{0, 0}, {0, 0}};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -27,7 +25,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -37,7 +35,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{0, 1, 0},};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -47,7 +45,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{0, 0, 0, 0},};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -57,7 +55,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{1, 1}, {1, 1},};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -67,7 +65,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{1, 1}, {1, 1},};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -77,7 +75,7 @@ public class GameOfLifeTest {
         int[][] actual = GameOfLife.evolve(initial);
 
         int[][] expected = new int[][]{{1, 0, 1}, {1, 0, 1},};
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
@@ -87,21 +85,25 @@ public class GameOfLifeTest {
         int[][] expected = new int[][]{{0, 0, 1, 0, 0}, {0, 0, 1, 1, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 0},};
 
         int[][] actual = GameOfLife.evolve(initial);
-        assertArrayEquals(expected, actual);
+        assert2DArrayEquals(expected, actual);
     }
 
     @Test
     public void printMatrix_2x3() {
         int[][] initial = new int[][]{{1, 1, 1}, {1, 0, 1},};
 
-        String expectedOutput = "X X X\n" + "X   X\n";
+        String expectedOutput = "X X X\n" + "X . X\n";
         assertEquals(expectedOutput, GameOfLife.print(initial));
     }
 
-    private static void assertArrayEquals(String message, int[][] expected, int[][] actual) {
+    private static void assert2DArrayEquals(String message, int[][] expected, int[][] actual) {
         // If both arrays are null, then we consider they are equal
         if (expected == null && actual == null) {
             return; // We get out of the function as everything is fine.
+        }
+
+        if ((expected == null) != (actual == null)) {
+            fail(message + ". One of the array is null, the other is not.");
         }
 
         // We test to see if the first dimension is the same.
@@ -112,7 +114,7 @@ public class GameOfLifeTest {
         // We test every array inside the 'outer' array.
         for (int i = 0; i < expected.length; i++) {
             // Can also use (with JUnit 4.3, but never tried it) assertArrayEquals(actual, expected);
-            assertTrue(message + ". Array no." + i + " in expected and actual aren't the same.", Arrays.equals(expected[i], actual[i]));
+            assertArrayEquals(message + ". Array no." + i + " in expected and actual aren't the same.", expected[i], actual[i]);
         }
     }
 
@@ -123,7 +125,7 @@ public class GameOfLifeTest {
      * @param expected The expected 2 dimensional array.
      * @param actual   The actual 2 dimensional array.
      */
-    static public void assertArrayEquals(int[][] expected, int[][] actual) {
-        assertArrayEquals("Array comparison failed!", expected, actual);
+    private static void assert2DArrayEquals(int[][] expected, int[][] actual) {
+        assert2DArrayEquals("Array comparison failed!", expected, actual);
     }
 }

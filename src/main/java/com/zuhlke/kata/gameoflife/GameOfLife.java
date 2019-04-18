@@ -6,58 +6,31 @@ import java.util.stream.IntStream;
 class GameOfLife {
 
     public static void main(String... args) throws Exception {
-        int[][] arr = new int[30][20];
-
-        for (int[] row : arr) {
-            IntStream.range(0, row.length).forEach(i -> row[i] = 0);
-        }
-
-        arr[10][10] = 1;
-        arr[11][10] = 1;
-        arr[12][10] = 1;
-        arr[13][10] = 1;
-        arr[14][10] = 1;
-        arr[15][10] = 1;
-        arr[16][10] = 1;
-        arr[17][10] = 1;
-
-        arr[10][11] = 1;
-        //ar1[31][41] = 1;
-        arr[12][11] = 1;
-        arr[13][11] = 1;
-        arr[14][11] = 1;
-        arr[15][11] = 1;
-        //ar1[36][41] = 1;
-        arr[17][11] = 1;
-
-        arr[10][12] = 1;
-        arr[11][12] = 1;
-        arr[12][12] = 1;
-        arr[13][12] = 1;
-        arr[14][12] = 1;
-        arr[15][12] = 1;
-        arr[16][12] = 1;
-        arr[17][12] = 1;
-
         //@formatter:off
-        int[][] initial = new int[][] {
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 1, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 0 ,0},
-            {0, 0, 0, 0, 1, 1, 1, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+        int[][] matrix = new int[][] {
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,0},
+            {0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0},
+            {0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         };
         //@formatter:on
 
-        while (true) {
-            arr = evolve(arr);
-            Thread.sleep(100);
-            System.out.println(print(arr));
+        for (int i = 0; i < 1000; i++) {
+            matrix = evolve(matrix);
+            Thread.sleep(500);
+            System.out.println(print(matrix));
             System.out.println();
             System.out.println();
             System.out.println();
@@ -81,61 +54,64 @@ class GameOfLife {
         return nextGen;
     }
 
-    private static int countOfAliveNeighbours(final int[][] matrix, final int x, final int y) {
+    private static int countOfAliveNeighbours(final int[][] matrix, final int rowIdx, final int colIdx) {
         int count = 0;
-        int width = matrix[x].length;
+        int width = matrix[0].length;
         int height = matrix.length;
 
-        // left
-        if (y > 0) {
-            count += matrix[x][y - 1];
-        }
-
-        // left top
-        if (y > 0 && x > 0) {
-            count += matrix[x - 1][y - 1];
-        }
+        boolean notLeftMost = colIdx > 0;
+        boolean notRightMost = colIdx < width - 1;
+        boolean notTopMost = rowIdx > 0;
+        boolean notBottomMost = rowIdx < height - 1;
 
         // top
-        if (x > 0) {
-            count += matrix[x - 1][y];
+        if (notTopMost) {
+            count += matrix[rowIdx - 1][colIdx];
+        }
+
+        // top left
+        if (notTopMost && notLeftMost) {
+            count += matrix[rowIdx - 1][colIdx - 1];
         }
 
         // top right
-        if (x > 0 && y < width - 1) {
-            count += matrix[x - 1][y + 1];
+        if (notTopMost && notRightMost) {
+            count += matrix[rowIdx - 1][colIdx + 1];
+        }
+
+        // left
+        if (notLeftMost) {
+            count += matrix[rowIdx][colIdx - 1];
         }
 
         // right
-        if (y < width - 1) {
-            count += matrix[x][y + 1];
-        }
-
-        // bottom right
-        if (x < height - 1 && y < width - 1) {
-            count += matrix[x + 1][y + 1];
+        if (notRightMost) {
+            count += matrix[rowIdx][colIdx + 1];
         }
 
         // bottom
-        if (x < height - 1) {
-            count += matrix[x + 1][y];
+        if (notBottomMost) {
+            count += matrix[rowIdx + 1][colIdx];
         }
 
         // bottom left
-        if (x < height - 1 && y > 0) {
-            count += matrix[x + 1][y - 1];
+        if (notBottomMost && notLeftMost) {
+            count += matrix[rowIdx + 1][colIdx - 1];
+        }
+
+        // bottom right
+        if (notBottomMost && notRightMost) {
+            count += matrix[rowIdx + 1][colIdx + 1];
         }
 
         return count;
     }
 
     static String print(final int[][] initial) {
-
         StringBuilder life = new StringBuilder();
 
         for (final int[] ints : initial) {
             String row = IntStream.of(ints).mapToObj(i -> i == 0 ? "." : "X").collect(Collectors.joining(" "));
-
             life.append(row).append(System.lineSeparator());
         }
 
